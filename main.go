@@ -27,7 +27,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer fd.Close()
+	defer func(fd *os.File) {
+		err := fd.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(fd)
 
 	// read CSV file
 	fileReader := csv.NewReader(fd)
@@ -36,35 +41,36 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
+	// Loop through csv slices
 	for _, v := range records {
 		towerName := v[1]
 		isOwned := strings.Contains(towerName, "RN")
 		signal, err := strconv.Atoi(v[3])
 
-		if err != nil {
-			fmt.Println("Could not convert to integer")
+		if err != nil || signal <= signalMax || !isOwned {
 			continue
 		}
-
-		if signal <= signalMax || !isOwned {
-			continue
-		}
+		// Append valid slices to new slice, for file writing
 		validConnections = append(validConnections, v)
 	}
 
-	// Create new scanlist csv file to write to
-	w, err := os.Create(outDir)
+	// Create new scan list csv file to write to
+	wfd, err := os.Create(outDir)
 	if err != nil {
-		fmt.Println("Could not create file")
+		panic(err)
 	}
-	defer w.Close()
+	defer func(wfd *os.File) {
+		err = wfd.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(wfd)
 
-	fileWriter := csv.NewWriter(w)
+	fileWriter := csv.NewWriter(wfd)
 	err = fileWriter.WriteAll(validConnections)
 	if err != nil {
-		fmt.Sprintln("Could not write to file")
+		fmt.Println("Could not write to file")
 	}
 
-	fmt.Println("Sectors filtered")
+	fmt.Printf("%d sectors identified\n", len(validConnections))
 }

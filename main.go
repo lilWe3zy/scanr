@@ -10,25 +10,25 @@ import (
 )
 
 func main() {
-	// Define and parse input flags
-	var signalMax int
-	var fileName string
-	var outDir string
+	var (
+		signalMax        int
+		fileName         string
+		outDir           string
+		validConnections [][]string
+	)
 
 	flag.IntVar(&signalMax, "signal", -55, "Provide a maximum allowed signal value")
 	flag.StringVar(&fileName, "file", "t.csv", "Input csv file to process")
 	flag.StringVar(&outDir, "outdir", "scanlist.csv", "Output csv file")
 
 	flag.Parse()
-	// Create final record structure
-	var validConnections [][]string
 
 	fd, err := os.Open(fileName)
 	if err != nil {
 		panic(err)
 	}
 	defer func(fd *os.File) {
-		err := fd.Close()
+		err = fd.Close()
 		if err != nil {
 			fmt.Println(err)
 		}

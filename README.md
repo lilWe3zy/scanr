@@ -38,6 +38,3 @@ Where:
 - ### `-n (name)`:
   - `string` Substring value to filter
   - **Default** `RN`
-
->[!NOTE]
-> This tool is hardcoded to deal with RapidNetworks Tower naming, but I will add support for custom names as soon as I can

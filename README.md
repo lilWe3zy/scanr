@@ -12,25 +12,32 @@ _Currently only have a build for windows, will get to multiplatform support as s
 ## Usage
 
 ```shell
-scanr -file<filePath> -signal<number> -outdir<filepath>
+scanr -f<filePath> -s<number> -o<filepath> -n<name>
 ```
 
-_By default, the program will look in the root directory for a file named `t.csv`, and output all towers below `-55 dBm` into `scanlist.csv`_
+_By default, the program will look in the root directory for a file named `t.csv`, filter out all connections with a name starts with `RN`, and output all towers below `-55 dBm` into `scanlist.csv`_
 
 Where:
 
- - ### `-file`:
-   - `string` - filepath to input csv file
+ - ### `-f (file)`:
+   - `string` Filepath to input csv file
+   - **Default** `t.csv`
    
 
- - ### `-signal`:
-   - `int` - signed integer value indicating the max dBm floor to cut off searching
-   - **Note:** This value should explicitly be called with a negative sign
+ - ### `-s (signal)`:
+   - `int` Signed integer value indicating the max dBm floor to cut off searching
+   - **Default** `-55`
+   - **Note** This value should explicitly be called with a negative sign
  
-- ### `-outdir`:
-  - `string` - filepath to the desired output directory
-  - **Note:** Will create file if it does not exist
-  - **Note:** Will overwrite file if it does exist
+- ### `-o (outdir)`:
+  - `string` Filepath to the desired output directory
+  - **Default** `scanlist.csv`
+  - **Note** Will create file if it does not exist
+  - **Note** Will overwrite file if it does exist
+
+- ### `-n (name)`:
+  - `string` Substring value to filter
+  - **Default** `RN`
 
 >[!NOTE]
 > This tool is hardcoded to deal with RapidNetworks Tower naming, but I will add support for custom names as soon as I can

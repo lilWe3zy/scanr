@@ -2,6 +2,7 @@
 ![](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
 
 This is just a small CLI tool I wrote to speed up some tedious CSV editing that we have to do every now and again.
+This is for filtering connections from a MikroTik CPE scan list.
 
 ## Installation
 

@@ -6,7 +6,7 @@ Updates to security related practises will be pushed through to all versions wit
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
+| 1.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 

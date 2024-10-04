@@ -11,21 +11,18 @@ import (
 
 func main() {
 	var (
-		signalMax        int
-		fileName         string
-		outDir           string
-		name             string
 		validConnections [][]string
 		err              error
 	)
 
-	flag.IntVar(&signalMax, "s", -55, "Provide a maximum allowed signal value")
-	flag.StringVar(&fileName, "f", "t.csv", "Input csv file to process")
-	flag.StringVar(&outDir, "o", "scanlist.csv", "Output csv file")
-	flag.StringVar(&name, "n", "RN", "Substring to match")
+	var maxSig = flag.Int("s", -55, "Provide a maximum allowed signal value")
+	var file = flag.String("f", "t.csv", "Input csv file to process")
+	var out = flag.String("o", "scanlist.csv", "Output csv file")
+	var sub = flag.String("n", "RN", "Substring to match")
+
 	flag.Parse()
 
-	fd, err := os.Open(fileName)
+	fd, err := os.Open(*file)
 	if err != nil {
 		panic(err)
 	}
@@ -43,10 +40,10 @@ func main() {
 
 	for _, connection := range records {
 		towerName := connection[1]
-		isOwned := strings.Contains(towerName, name)
+		isOwned := strings.Contains(towerName, *sub)
 		signal, recordError := strconv.Atoi(connection[3])
 
-		if recordError != nil || signal <= signalMax || !isOwned {
+		if recordError != nil || signal <= *maxSig || !isOwned {
 			continue
 		}
 
@@ -54,7 +51,7 @@ func main() {
 	}
 
 	/* New file creation */
-	wfd, err := os.Create(outDir)
+	wfd, err := os.Create(*out)
 	if err != nil {
 		panic(err)
 	}

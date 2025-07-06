@@ -23,15 +23,24 @@ Within the file, we are given a list of entries in the form of:
 | 5     | Protocol                   | Wireless protocol                       | `nv2`               |
 | 6     | Security                   | Security type                           | `privacy`           |
 
+**An index of channel flags present in index 3:**
+
+| Flag       | Description                                                  |
+|------------|--------------------------------------------------------------|
+| `Ce`       | Control channel is lower, extension channel is above         |
+| `eCee`     | Indicates 80 MHz channel width with specific bonding pattern |
+| `Ceee`     | Control channel is at the start of a 160 MHz block           |
+| `-` (None) | Standard 20 MHz channel, no bonding                          |
+
 **An index for possible standards as found in index 3:**
 
-| Code | Standard  | Band        |
-|------|-----------|-------------|
-| a    | 802.11a   | 5 GHz       |
-| n    | 802.11n   | 2,4/5 GHz   |
-| ac   | 802.11ac  | 5 Ghz       |
-| ax   | 802.11ax  | 2.4/5/6 GHz |
-| b/g  | 802.11b/g | 2.4 GHz     |
+| Code   | Standard  | Band        |
+|--------|-----------|-------------|
+| `a`    | 802.11a   | 5 GHz       |
+| `n`    | 802.11n   | 2,4/5 GHz   |
+| `ac`   | 802.11ac  | 5 Ghz       |
+| `ax`   | 802.11ax  | 2.4/5/6 GHz |
+| `b/g`  | 802.11b/g | 2.4 GHz     |
 
 
 ## Installation

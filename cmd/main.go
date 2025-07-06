@@ -4,66 +4,94 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
 )
 
-func main() {
-	var (
-		validConnections [][]string
-		err              error
+var (
+	signal int
+	ssid   string
+)
+
+func init() {
+	const (
+		defaultSignal = -55
+		signalDesc    = "Signal in dBm to set as minimum viable signal"
+		defaultSSID   = ""
+		ssidDesc      = "The SSID substring to match when filtering for connections"
 	)
 
-	var maxSig = flag.Int("s", -55, "Provide a maximum allowed signal value")
-	var file = flag.String("f", "t.csv", "Input csv file to process")
-	var out = flag.String("o", "scanlist.csv", "Output csv file")
-	var sub = flag.String("n", "RN", "Substring to match")
+	flag.IntVar(&signal, "signal", defaultSignal, signalDesc)
+	flag.IntVar(&signal, "s", defaultSignal, signalDesc)
+	flag.StringVar(&ssid, "ssid", defaultSSID, ssidDesc)
+	flag.StringVar(&ssid, "id", defaultSSID, ssidDesc)
+}
+
+func main() {
+	var (
+		inputFilePath  = flag.String("in", "", "input file path")
+		outputFilePath = flag.String("out", "output.csv", "output file path")
+	)
 
 	flag.Parse()
 
-	fd, err := os.Open(*file)
-	if err != nil {
-		panic(err)
+	// Flag validation
+	// The inputFilePath variable is required,
+	// and no default is set, as the name can change depending on what the name was set on the router itself.
+	if inputFilePath == nil || *inputFilePath == "" {
+		flag.Usage()
+		log.Fatalln("Missing input file path, aborting")
 	}
-	/* Explicit ignore with File closure */
+
+	file, err := os.Open(*inputFilePath)
+	if err != nil {
+		log.Fatalf("Error opening input file: %v", err)
+	}
 	defer func(fd *os.File) {
-		_ = fd.Close()
-	}(fd)
+		err = fd.Close()
+		if err != nil {
+			log.Fatalf("Error closing input file: %v", err)
+		}
+	}(file)
 
-	fileReader := csv.NewReader(fd)
+	reader := csv.NewReader(file)
 
-	records, err := fileReader.ReadAll()
+	records, err := reader.ReadAll()
 	if err != nil {
-		panic(err)
+		log.Fatalf("Error reading csv entries: %v", err)
 	}
 
-	for _, connection := range records {
-		towerName := connection[1]
-		isOwned := strings.Contains(towerName, *sub)
-		signal, recordError := strconv.Atoi(connection[3])
+	var validConnections [][]string
+	for _, conn := range records {
+		id := conn[1]
+		isOwned := strings.Contains(id, ssid)
+		sig, recordError := strconv.Atoi(conn[3])
 
-		if recordError != nil || signal <= *maxSig || !isOwned {
+		if recordError != nil || sig <= signal || !isOwned {
 			continue
 		}
 
-		validConnections = append(validConnections, connection)
+		validConnections = append(validConnections, conn)
 	}
 
 	/* New file creation */
-	wfd, err := os.Create(*out)
+	wfd, err := os.Create(*outputFilePath)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Error creating output file: %v", err)
 	}
 	defer func(wfd *os.File) {
-		_ = wfd.Close()
+		err = wfd.Close()
+		if err != nil {
+			log.Fatalf("Error closing output file: %v", err)
+		}
 	}(wfd)
 
 	fileWriter := csv.NewWriter(wfd)
 
-	err = fileWriter.WriteAll(validConnections)
-	if err != nil {
-		panic(err)
+	if err = fileWriter.WriteAll(validConnections); err != nil {
+		log.Fatalf("Error writing csv entries: %v", err)
 	}
 
 	fmt.Printf("%d sectors identified\n", len(validConnections))

@@ -51,29 +51,26 @@ _Currently only have a build for windows, will get to multiplatform support as s
 ## Usage
 
 ```shell
-scanr -f<filePath> -s<number> -o<filepath> -n<name>
+scanr -in<inputFilePath> -signal[-s]<dBm> -out<outputFilePath> -ssid[-id]<SSID>
 ```
-
-_By default, the program will look in the root directory for a file named `t.csv`, filter out all connections with a name starts with `RN`, and output all towers below `-55 dBm` into `scanlist.csv`_
 
 Where:
 
- - ### `-f (file)`:
+ - ### `-in (filepath)`:
    - `string` Filepath to input csv file
-   - **Default** `t.csv`
+   - Required
    
 
- - ### `-s (signal)`:
+ - ### `-signal, -s (dBm)`:
    - `int` Signed integer value indicating the max dBm floor to cut off searching
    - **Default** `-55`
    - **Note** This value should explicitly be called with a negative sign
  
-- ### `-o (outdir)`:
+- ### `-out (outdir)`:
   - `string` Filepath to the desired output directory
-  - **Default** `scanlist.csv`
+  - **Default** `output.csv`
   - **Note** Will create file if it does not exist
   - **Note** Will overwrite file if it does exist
 
-- ### `-n (name)`:
+- ### `-ssid, -id (SSID)`:
   - `string` Substring value to filter
-  - **Default** `RN`
